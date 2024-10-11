@@ -2,6 +2,7 @@ package store
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"sort"
 	"strings"
@@ -206,18 +207,10 @@ func (st DBstore) DeleteAlertInstances(ctx context.Context, keys ...models.Alert
 	return err
 }
 
-// SaveAlertInstancesForRule saves multiple alert instances for the alert rule.
-// It does not start a transaction, so each instance is saved in a separate transaction,
-// to keep the current store behaviour when saving instances happens one by one.
-// This is done to avoid long transactions when there are many instances to save.
+// SaveAlertInstancesForRule is not implemented in the database instance store.
 func (st DBstore) SaveAlertInstancesForRule(ctx context.Context, key models.AlertRuleKey, instances []models.AlertInstance) error {
-	for _, alertInstance := range instances {
-		if err := st.SaveAlertInstance(ctx, alertInstance); err != nil {
-			return err
-		}
-	}
-
-	return nil
+	st.Logger.Error("SaveAlertInstancesForRule is not implemented in the database instance store")
+	return errors.New("SaveAlertInstancesForRule is not implemented in the database instance store")
 }
 
 func (st DBstore) DeleteAlertInstancesByRule(ctx context.Context, key models.AlertRuleKey) error {
